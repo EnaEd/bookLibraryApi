@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BookLibraryApi.BusinesLayer.Intefaces;
 using BookLibraryApi.BusinesLayer.ViewModels;
 using BookLibraryApi.DataAccess.Entities;
 using BookLibraryApi.DataAccess.Interfaces;
@@ -6,7 +7,7 @@ using System.Collections.Generic;
 
 namespace BookLibraryApi.BusinesLayer.Services
 {
-    public class BookService : BaseService
+    public class BookService : BaseService, IService<BookViewModel>
     {
         private readonly IRepository<Book> _bookRepository;
         public BookService(IRepository<Book> bookRepository,
@@ -44,6 +45,11 @@ namespace BookLibraryApi.BusinesLayer.Services
         {
             IEnumerable<BookViewModel> books = _mapper.Map<IEnumerable<BookViewModel>>(_bookRepository.Get(category));
             return books;
+        }
+
+        public BookViewModel Get(int Id)
+        {
+            return null;
         }
     }
 }

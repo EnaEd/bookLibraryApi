@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace BookLibraryApi.DataAccess.Interfaces
+namespace BookLibraryApi.BusinesLayer.Intefaces
 {
-    public interface IRepository<T> where T : class
+    public interface IService<T> where T:class
     {
         IEnumerable<T> Get();
         IEnumerable<T> Get(string id);

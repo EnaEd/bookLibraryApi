@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
+using BookLibraryApi.BusinesLayer.Intefaces;
 using BookLibraryApi.BusinesLayer.MappingProfiles;
+using BookLibraryApi.BusinesLayer.Services;
+using BookLibraryApi.BusinesLayer.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,6 +21,8 @@ namespace BookLibraryApi.BusinesLayer
 
             IMapper mapper = config.CreateMapper();
             services.AddSingleton(mapper);
+            services.AddTransient<IService<BookViewModel>, BookService>();
+            services.AddTransient<IService<ReaderViewModel>, ReaderService>();
         }
     }
 }

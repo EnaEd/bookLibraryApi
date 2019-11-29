@@ -1,10 +1,8 @@
 ﻿using BookLibraryApi.DataAccess.EF;
 using BookLibraryApi.DataAccess.Entities;
 using BookLibraryApi.DataAccess.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace BookLibraryApi.DataAccess.Repositories
 {

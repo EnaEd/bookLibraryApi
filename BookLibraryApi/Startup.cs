@@ -23,6 +23,15 @@ namespace BookLibraryApi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseAuthentication();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Book}/{action=Index}/{id?}");
+            });
         }
     }
 }

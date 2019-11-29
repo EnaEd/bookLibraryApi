@@ -1,17 +1,16 @@
 ﻿using AutoMapper;
+using BookLibraryApi.BusinesLayer.Intefaces;
 using BookLibraryApi.BusinesLayer.ViewModels;
 using BookLibraryApi.DataAccess.Entities;
 using BookLibraryApi.DataAccess.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace BookLibraryApi.BusinesLayer.Services
 {
-    public class ReaderService:BaseService
+    public class ReaderService : BaseService, IService<ReaderViewModel>
     {
         private readonly IRepository<Reader> _readerRepository;
-        public ReaderService(IMapper mapper,IRepository<Reader> repository):base(mapper)
+        public ReaderService(IMapper mapper, IRepository<Reader> repository) : base(mapper)
         {
             _readerRepository = repository;
         }
@@ -45,6 +44,11 @@ namespace BookLibraryApi.BusinesLayer.Services
         {
             ReaderViewModel books = _mapper.Map<ReaderViewModel>(_readerRepository.Get(id));
             return books;
+        }
+
+        public IEnumerable<ReaderViewModel> Get(string id)
+        {
+            return null;
         }
     }
 }
