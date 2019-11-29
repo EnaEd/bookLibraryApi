@@ -1,47 +1,49 @@
 ﻿using AutoMapper;
 using BookLibraryApi.BusinesLayer.ViewModels;
-using BookLibraryApi.DataAccess.EF;
 using BookLibraryApi.DataAccess.Entities;
 using BookLibraryApi.DataAccess.Interfaces;
-using BookLibraryApi.DataAccess.Repositories;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace BookLibraryApi.BusinesLayer.Services
 {
-    public class BookService:BaseService
+    public class BookService : BaseService
     {
         private readonly IRepository<Book> _bookRepository;
-        private readonly IRepository<Reader> _readeRrepository;
-        public BookService(IRepository<Book> bookRepository, IRepository<Reader> readerRepository,
-            IMapper mapper):base(mapper)
+        public BookService(IRepository<Book> bookRepository,
+            IMapper mapper) : base(mapper)
         {
             _bookRepository = bookRepository;
-            _readeRrepository = readerRepository;
         }
+
+        //implement extra CRUD logic here
         public void Create(BookViewModel book)
         {
-
+            Book mapped = _mapper.Map<Book>(book);
+            _bookRepository.Create(mapped);
         }
-        
+
         public void Delete(BookViewModel book)
         {
-
+            Book mapped = _mapper.Map<Book>(book);
+            _bookRepository.Delete(mapped);
         }
+
         public void Update(BookViewModel book)
         {
-
+            Book mapped = _mapper.Map<Book>(book);
+            _bookRepository.Update(mapped);
         }
+
         public IEnumerable<BookViewModel> Get()
         {
-            throw new Exception();
+            IEnumerable<BookViewModel> books = _mapper.Map<IEnumerable<BookViewModel>>(_bookRepository.Get());
+            return books;
         }
-        public IEnumerable<BookViewModel>Get(string category)
+
+        public IEnumerable<BookViewModel> Get(string category)
         {
-            throw new Exception();
+            IEnumerable<BookViewModel> books = _mapper.Map<IEnumerable<BookViewModel>>(_bookRepository.Get(category));
+            return books;
         }
     }
 }

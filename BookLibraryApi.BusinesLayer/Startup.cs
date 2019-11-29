@@ -12,8 +12,8 @@ namespace BookLibraryApi.BusinesLayer
             DataAccess.Startup.OnInit(services, configuration);
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new BookMappingProfile());
                 cfg.AddProfile(new ReaderMappingProfile());
+                cfg.AddProfile(new BookMappingProfile());
             });
 
             IMapper mapper = config.CreateMapper();
