@@ -7,7 +7,6 @@ namespace BookLibraryApi.DataAccess.Entities
 {
     public class Reader
     {
-
         public int Id { get; set; }
 
         [Required]
