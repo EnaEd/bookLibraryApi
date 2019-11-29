@@ -17,6 +17,8 @@ namespace BookLibraryApi
         public void ConfigureServices(IServiceCollection services)
         {
             BusinesLayer.Startup.OnInit(services, Configuration);
+
+            services.AddMvc();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
