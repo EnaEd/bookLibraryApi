@@ -7,7 +7,8 @@ namespace BookLibraryApi.DataAccess.Interfaces
     public interface IRepository<T> where T : class
     {
         IEnumerable<T> Get();
-        IEnumerable<T> Get(int id);
+        IEnumerable<T> Get(string id);
+        T Get(int Id);
         void Create(T item);
         void Update(T item);
         void Delete(T item);
