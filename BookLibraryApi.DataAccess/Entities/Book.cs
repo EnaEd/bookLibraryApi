@@ -14,5 +14,8 @@ namespace BookLibraryApi.DataAccess.Entities
 
         [Required]
         public string Category { get; set; }
+
+        public int? ReaderId { get; set; }
+        public Reader Reader { get; set; }
     }
 }

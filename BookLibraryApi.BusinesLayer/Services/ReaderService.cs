@@ -16,34 +16,34 @@ namespace BookLibraryApi.BusinesLayer.Services
         }
 
         //implement extra CRUD logic here
-        public void Create(ReaderViewModel book)
+        public void Create(ReaderViewModel reader)
         {
-            Reader mapped = _mapper.Map<Reader>(book);
+            Reader mapped = _mapper.Map<Reader>(reader);
             _readerRepository.Create(mapped);
         }
 
-        public void Delete(ReaderViewModel book)
+        public void Delete(ReaderViewModel reader)
         {
-            Reader mapped = _mapper.Map<Reader>(book);
+            Reader mapped = _mapper.Map<Reader>(reader);
             _readerRepository.Delete(mapped);
         }
 
-        public void Update(ReaderViewModel book)
+        public void Update(ReaderViewModel reader)
         {
-            Reader mapped = _mapper.Map<Reader>(book);
+            Reader mapped = _mapper.Map<Reader>(reader);
             _readerRepository.Update(mapped);
         }
 
         public IEnumerable<ReaderViewModel> Get()
         {
-            IEnumerable<ReaderViewModel> books = _mapper.Map<IEnumerable<ReaderViewModel>>(_readerRepository.Get());
-            return books;
+            IEnumerable<ReaderViewModel> readers = _mapper.Map<IEnumerable<ReaderViewModel>>(_readerRepository.Get());
+            return readers;
         }
 
         public ReaderViewModel Get(int id)
         {
-            ReaderViewModel books = _mapper.Map<ReaderViewModel>(_readerRepository.Get(id));
-            return books;
+            ReaderViewModel readers = _mapper.Map<ReaderViewModel>(_readerRepository.Get(id));
+            return readers;
         }
 
         public IEnumerable<ReaderViewModel> Get(string id)

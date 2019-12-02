@@ -36,6 +36,27 @@ namespace BookLibraryApi.DataAccess.Repositories
 
         public IEnumerable<Book> Get()
         {
+            if (!_context.Books.Any())
+            {
+                var reader1 = new Reader { Name = "Ed Ena" };
+                var reader2 = new Reader { Name = "Jhon Dow" };
+                _context.Readers.Add(reader1);
+                _context.Readers.Add(reader2);
+                _context.SaveChanges();
+
+                _context.Books.Add(new Book { Title = "The Lord of the Rings", Author = "JRR Tolkien", Category = "Fantasy" ,Reader=reader1});
+                _context.Books.Add(new Book { Title = "Pride and Prejudice", Author = "Jane Austen", Category = "BestSeller",  Reader = reader2 });
+                _context.Books.Add(new Book { Title = "His Dark Materials", Author = "Philip Pullman", Category = "BestSeller", Reader = reader2 });
+                _context.Books.Add(new Book { Title = "The Hitchhiker's Guide to the Galaxy", Author = "Douglas Adams", Category = "BestSeller"});
+                _context.Books.Add(new Book { Title = "Harry Potter and the Goblet of Fire", Author = "JK Rowling", Category = "Child", Reader = reader2 });
+                _context.Books.Add(new Book { Title = "To Kill a Mockingbird", Author = "Harper Lee", Category = "BestSeller"});
+                _context.Books.Add(new Book { Title = "Winnie the Pooh", Author = "AA Milne", Category = "Child"});
+                _context.Books.Add(new Book { Title = "Nineteen Eighty-Four", Author = "George Orwell", Category = "BestSeller"});
+                _context.Books.Add(new Book { Title = "The Lion, the Witch and the Wardrobe", Author = "CS Lewis", Category = "BestSeller"});
+                _context.Books.Add(new Book { Title = "The Hobbit", Author = "JRR Tolkien", Category = "Fantasy", Reader = reader2 });
+                _context.SaveChanges();
+        
+            }
             return _context.Books;
         }
 

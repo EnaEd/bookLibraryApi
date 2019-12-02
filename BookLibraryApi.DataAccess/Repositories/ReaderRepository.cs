@@ -1,6 +1,7 @@
 ﻿using BookLibraryApi.DataAccess.EF;
 using BookLibraryApi.DataAccess.Entities;
 using BookLibraryApi.DataAccess.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -35,7 +36,9 @@ namespace BookLibraryApi.DataAccess.Repositories
 
         public IEnumerable<Reader> Get()
         {
-            return _context.Readers;
+            var readers = _context.Readers.Include(reader => reader.Books).ToList();
+            return readers;
+            //return _context.Readers;
         }
 
         public IEnumerable<Reader> Get(string id)
