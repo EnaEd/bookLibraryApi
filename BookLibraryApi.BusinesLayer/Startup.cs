@@ -23,6 +23,7 @@ namespace BookLibraryApi.BusinesLayer
             services.AddSingleton(mapper);
             services.AddTransient<IService<BookViewModel>, BookService>();
             services.AddTransient<IService<ReaderViewModel>, ReaderService>();
+            services.AddTransient<IAccountService, AccountService>();
         }
     }
 }

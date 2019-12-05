@@ -1,8 +1,6 @@
 ﻿using BookLibraryApi.BusinesLayer.Intefaces;
 using BookLibraryApi.BusinesLayer.ViewModels;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace BookLibraryApi.Controllers

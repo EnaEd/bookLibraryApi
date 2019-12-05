@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -34,7 +33,7 @@ namespace BookLibraryApi
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=book}/{action?}/{id?}");
+                    pattern: "{controller}/{action?}/{id?}");
             });
         }
     }
