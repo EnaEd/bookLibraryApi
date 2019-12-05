@@ -1,5 +1,6 @@
 ﻿using BookLibraryApi.BusinesLayer.Intefaces;
 using BookLibraryApi.BusinesLayer.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -7,6 +8,7 @@ namespace BookLibraryApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    //[Authorize]
     public class ApiController : ControllerBase
     {
         private IService<BookViewModel> _bookService;
@@ -19,6 +21,10 @@ namespace BookLibraryApi.Controllers
         [HttpGet("GetBook")]
         public IEnumerable<BookViewModel> GetBook()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return null;
+            }
             return _bookService.Get();
         }
 

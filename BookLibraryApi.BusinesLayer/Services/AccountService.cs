@@ -25,6 +25,7 @@ namespace BookLibraryApi.BusinesLayer.Services
         {
             SignInResult result =
                 await _signInManager.PasswordSignInAsync(user.Login, user.Password, user.RememberMe, false);
+
             return result.Succeeded;
         }
 

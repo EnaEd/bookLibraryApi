@@ -14,7 +14,8 @@ namespace BookLibraryApi.DataAccess
         public static void OnInit(IServiceCollection services,IConfiguration configuration)
         {
             string connectionString = configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connectionString));
+            services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connectionString,
+                b=>b.MigrationsAssembly("BookLibraryApi")));
 
             services.AddIdentity<User, IdentityRole>()
                .AddEntityFrameworkStores<ApplicationContext>();
