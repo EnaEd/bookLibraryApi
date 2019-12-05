@@ -27,7 +27,11 @@ namespace BookLibraryApi
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseAuthentication();
-            app.UseCors(builder => builder.AllowAnyOrigin());
+            app.UseCors(builder => {
+                builder.AllowAnyOrigin();
+                builder.AllowAnyHeader();
+                builder.AllowAnyMethod();
+                });
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {

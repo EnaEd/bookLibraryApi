@@ -18,13 +18,13 @@ namespace BookLibraryApi.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<UserViewModel> Login(UserViewModel user)
+        public UserViewModel Login([FromBody] UserViewModel user)
         {
             if (!ModelState.IsValid)
             {
                 return null;
             }
-            return await _accountService.OnLogin(user) ? user : null;
+            return _accountService.OnLogin(user).GetAwaiter().GetResult() ? user : null;
         }
 
         [HttpPost("Logout")]
