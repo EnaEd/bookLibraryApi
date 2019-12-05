@@ -21,10 +21,10 @@ namespace BookLibraryApi.Controllers
         [HttpGet("GetBook")]
         public IEnumerable<BookViewModel> GetBook()
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return null;
-            }
+            //if (!User.Identity.IsAuthenticated)
+            //{
+            //    return null;
+            //}
             return _bookService.Get();
         }
 

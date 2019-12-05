@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BookLibraryApi
 {
@@ -17,6 +19,8 @@ namespace BookLibraryApi
         public void ConfigureServices(IServiceCollection services)
         {
             BusinesLayer.Startup.OnInit(services, Configuration);
+
+          
 
             services.AddMvc();
             services.AddCors();
