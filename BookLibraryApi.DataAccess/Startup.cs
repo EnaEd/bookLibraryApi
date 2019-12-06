@@ -29,10 +29,10 @@ namespace BookLibraryApi.DataAccess
                       {
 
                           ValidateIssuer = true,
-                          ValidIssuer = configuration["AuthOptions:ISSUER"],
+                          ValidIssuer = configuration["AuthOption:Issuer"],
 
-                          ValidateAudience = true,
-                          ValidAudience = configuration["AuthOptions:AUDIENCE"],
+                          ValidateAudience = false,
+                          ValidAudience = configuration["AuthOption:Audience"],
 
                           ValidateLifetime = true,
 
