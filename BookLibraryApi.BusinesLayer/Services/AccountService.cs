@@ -1,6 +1,7 @@
 ﻿using BookLibraryApi.BusinesLayer.Intefaces;
 using BookLibraryApi.BusinesLayer.ViewModels;
 using BookLibraryApi.DataAccess.Entities;
+using BookLibraryApi.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
@@ -14,19 +15,24 @@ namespace BookLibraryApi.BusinesLayer.Services
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
-        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
+        private readonly ITokenServie _tokenServie;
+        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager, 
+            IConfiguration configuration,ITokenServie tokenServie)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _tokenServie = tokenServie;
         }
 
-        public async Task<bool> OnLogin(UserViewModel user)
+        public async Task<string> OnLogin(UserViewModel user)
         {
             SignInResult result =
                 await _signInManager.PasswordSignInAsync(user.Login, user.Password, user.RememberMe, false);
+            return result.Succeeded ? await _tokenServie.GenerateToken(user.Login, user.Password) :
+                _configuration["ErrorsMessage:Unauthorize:errorCode"];
+                
 
-            return result.Succeeded;
         }
 
         public async Task OnLogout()

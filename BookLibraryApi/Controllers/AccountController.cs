@@ -4,6 +4,7 @@ using BookLibraryApi.BusinesLayer.Intefaces;
 using BookLibraryApi.BusinesLayer.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace BookLibraryApi.Controllers
 {
@@ -12,23 +13,29 @@ namespace BookLibraryApi.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
-        public AccountController(IAccountService accountService)
+        private readonly IConfiguration _configuration;
+        public AccountController(IAccountService accountService, IConfiguration configuration)
         {
             _accountService = accountService;
+            _configuration = configuration;
         }
 
         [HttpPost("Login")]
-        public UserViewModel Login([FromBody] UserViewModel user)
+        public async Task<string> Login([FromBody] UserViewModel user)
         {
             if (!ModelState.IsValid)
             {
                 return null;
             }
-            return _accountService.OnLogin(user).GetAwaiter().GetResult() ? user : null;
+            //TODO architecture?
+            var result = await _accountService.OnLogin(user);//getAwaiter().getResult()?
+            return result.Equals(_configuration["ErrorsMessage:Unauthorize:errorCode"]) ?
+                (Response.StatusCode = 401).ToString() :
+                await _accountService.OnLogin(user);
         }
 
-        [HttpPost("Logout")]
-        [ValidateAntiForgeryToken]
+        [HttpGet("Logout")]
+        //[ValidateAntiForgeryToken]
         public async Task Logout()
         {
             await _accountService.OnLogout();

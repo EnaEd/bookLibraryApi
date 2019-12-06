@@ -42,6 +42,8 @@ namespace BookLibraryApi.DataAccess
                       };
                   });
 
+
+
             services.AddIdentity<User, IdentityRole>()
                .AddEntityFrameworkStores<ApplicationContext>();
 

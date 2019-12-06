@@ -20,6 +20,7 @@ namespace BookLibraryApi.DataAccess.Services
         public TokenService(UserManager<User> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
+            _configuration = configuration;
         }
         public async Task<string> GenerateToken(string userName, string password)
         {

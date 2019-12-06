@@ -7,7 +7,7 @@ namespace BookLibraryApi.BusinesLayer.Intefaces
 {
     public interface IAccountService
     {
-        Task<bool> OnLogin(UserViewModel user);
+        Task<string> OnLogin(UserViewModel user);
         Task<bool> OnReigstration(UserViewModel userl, List<IdentityError> errors);
         Task OnLogout();
     }
