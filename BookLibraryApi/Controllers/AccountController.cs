@@ -38,7 +38,7 @@ namespace BookLibraryApi.Controllers
             }
 
             var result = await _accountService.OnLogin(user);
-           
+
             if (!_configuration.AsEnumerable().ToList().
                 Where(section => section.Key.Contains("innerCode")).
                 Any(item => item.Value.Contains(result)))
@@ -49,8 +49,8 @@ namespace BookLibraryApi.Controllers
                 Where(section => section.Key.Contains("innerCode")).
                 First(item => item.Value.Contains(result)).Key.Replace(":innerCode", "");
 
-            
-            if (Convert.ToInt32(_configuration[$"{errorSection}:errorCode"])==(int)HttpStatusCode.BadRequest)
+
+            if (Convert.ToInt32(_configuration[$"{errorSection}:errorCode"]) == (int)HttpStatusCode.BadRequest)
             {
                 return BadRequest(_configuration[$"{errorSection}:message"]);
             }
@@ -58,20 +58,21 @@ namespace BookLibraryApi.Controllers
             {
                 return Unauthorized(_configuration[$"{errorSection}:message"]);
             }
-            
+
             return BadRequest(_configuration["ErrorsMessage:UnhandleExption:message"]);
 
         }
 
         [HttpGet("Logout")]
         //[ValidateAntiForgeryToken]
-        public async Task Logout()
+        public async Task<IActionResult> Logout()
         {
             await _accountService.OnLogout();
+            return Ok();
         }
 
         [HttpPost("Registration")]
-        public async Task<string> Registration(UserViewModel model)
+        public async Task<IActionResult> Registration(UserViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -81,7 +82,7 @@ namespace BookLibraryApi.Controllers
             List<IdentityError> errors = new List<IdentityError>();
             if (!await _accountService.OnReigstration(model, errors))
             {
-                return JsonConvert.SerializeObject(errors.Select(error => error.Description));
+                return BadRequest(JsonConvert.SerializeObject(errors.Select(error => error.Description)));
             }
 
             //generate mail confirmation
@@ -97,17 +98,18 @@ namespace BookLibraryApi.Controllers
                 "Confirm your account",
                 $"Confirm regisration by link:<a href='{callbackUrl}'>link</a>");
 
-            return (Response.StatusCode = 200).ToString();
+            return Ok();
         }
 
         [HttpGet("ConfirmEmail")]
-        public async Task<string> ConfirmEmail(string userId, string code)
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
-            return userId is null ||
-                   code is null ||
-                   !await _accountService.ConfirmEmailAsync(userId, code) ?
-                   (Response.StatusCode = 400).ToString() :
-                   (Response.StatusCode = 200).ToString();
+            if (userId is null || code is null ||
+                !await _accountService.ConfirmEmailAsync(userId, code))
+            {
+                return BadRequest(_configuration["ErrorsMessage:NoEmailConfirm:message"]);
+            }
+            return Ok();
         }
     }
 }
