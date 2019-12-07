@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BookLibraryApi.BusinesLayer.Intefaces;
@@ -24,21 +26,41 @@ namespace BookLibraryApi.Controllers
             _accountService = accountService;
             _configuration = configuration;
             _emailService = emailService;
-            
+
         }
 
         [HttpPost("Login")]
-        public async Task<string> Login([FromBody] UserViewModel user)
+        public async Task<IActionResult> Login([FromBody] UserViewModel user)
         {
             if (!ModelState.IsValid)
             {
-                return null;
+                return BadRequest(_configuration["ErrorsMessage:NoValidData:message"]);
             }
-            //TODO architecture?
-            var result = await _accountService.OnLogin(user);//getAwaiter().getResult()?
-            return result.Equals(_configuration["ErrorsMessage:Unauthorize:errorCode"]) ?
-                (Response.StatusCode = 401).ToString() :
-                await _accountService.OnLogin(user);
+
+            var result = await _accountService.OnLogin(user);
+           
+            if (!_configuration.AsEnumerable().ToList().
+                Where(section => section.Key.Contains("innerCode")).
+                Any(item => item.Value.Contains(result)))
+            {
+                return Ok(result);
+            }
+            var errorSection = _configuration.AsEnumerable().ToList().
+                Where(section => section.Key.Contains("innerCode")).
+                First(item => item.Value.Contains(result)).Key.Replace(":innerCode", "");
+
+            
+            if (Convert.ToInt32(_configuration[$"{errorSection}:errorCode"])==(int)HttpStatusCode.BadRequest)
+            {
+                return BadRequest(_configuration[$"{errorSection}:message"]);
+            }
+            if (Convert.ToInt32(_configuration[$"{errorSection}:errorCode"]) == (int)HttpStatusCode.Unauthorized)
+            {
+                return Unauthorized(_configuration[$"{errorSection}:message"]);
+            }
+            
+            return BadRequest(_configuration["ErrorsMessage:UnhandleExption:message"]);
+
         }
 
         [HttpGet("Logout")]

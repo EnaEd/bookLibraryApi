@@ -62,11 +62,11 @@ namespace BookLibraryApi.BusinesLayer.Services
             User user = await _userManager.FindByEmailAsync(model.Login);
             if (user is null)
             {
-                return _configuration["ErrorsMessage:UserNotExists:errorCode"];
+                return _configuration["ErrorsMessage:UserNotExists:innerCode"];
             }
             if (!user.EmailConfirmed)
             {
-                return _configuration["ErrorsMessage:NoEmailConfirm:errorCode"];
+                return _configuration["ErrorsMessage:NoEmailConfirm:innerCode"];
             }
 
             SignInResult result =
