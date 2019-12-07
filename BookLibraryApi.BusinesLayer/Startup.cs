@@ -24,6 +24,8 @@ namespace BookLibraryApi.BusinesLayer
             services.AddTransient<IService<BookViewModel>, BookService>();
             services.AddTransient<IService<ReaderViewModel>, ReaderService>();
             services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<IEmailService, EmailService>();
+
         }
     }
 }

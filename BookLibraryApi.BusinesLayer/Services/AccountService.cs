@@ -14,15 +14,47 @@ namespace BookLibraryApi.BusinesLayer.Services
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly ITokenServie _tokenServie;
-        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager, 
-            IConfiguration configuration,ITokenServie tokenServie)
+        private readonly IEmailService _emailService;
+        private readonly IRoleInitializerService _roleInitializer;
+        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager,
+            IConfiguration configuration, ITokenServie tokenServie, IEmailService emailService,
+            IRoleInitializerService roleInitializer,RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _tokenServie = tokenServie;
+            _emailService = emailService;
+            _roleInitializer = roleInitializer;
+            _roleManager = roleManager;
+            
+        }
+
+        public async Task<bool> ConfirmEmailAsync(string userId, string code)
+        {
+
+            return await _userManager.FindByIdAsync(userId) is User user ?
+                   _userManager.ConfirmEmailAsync(user, code).GetAwaiter().GetResult().Succeeded:
+                   false;
+
+        }
+
+        public async Task<string> GeenerateConfirmationTokenAsync(UserViewModel user)
+        {
+            User result = await _userManager.FindByEmailAsync(user.Login);
+            if (result is null)
+            {
+                return null;
+            }
+            return await _userManager.GenerateEmailConfirmationTokenAsync(result);
+        }
+
+        public async Task<string> GetUserIdAsync(UserViewModel model)
+        {
+            return await _userManager.FindByEmailAsync(model.Login) is User user ? user.Id : null;
         }
 
         public async Task<string> OnLogin(UserViewModel user)
@@ -31,7 +63,7 @@ namespace BookLibraryApi.BusinesLayer.Services
                 await _signInManager.PasswordSignInAsync(user.Login, user.Password, user.RememberMe, false);
             return result.Succeeded ? await _tokenServie.GenerateToken(user.Login, user.Password) :
                 _configuration["ErrorsMessage:Unauthorize:errorCode"];
-                
+
 
         }
 
@@ -42,6 +74,8 @@ namespace BookLibraryApi.BusinesLayer.Services
 
         public async Task<bool> OnReigstration(UserViewModel userModel, List<IdentityError> errors)
         {
+            await _roleInitializer.InitializeAsync(_userManager, _roleManager, _configuration);
+
             User user = new User { Email = userModel.Login, UserName = userModel.Login };
             IdentityResult result = await _userManager.CreateAsync(user, userModel.Password);
             if (!result.Succeeded)
@@ -50,8 +84,6 @@ namespace BookLibraryApi.BusinesLayer.Services
                 return false;
             }
             await _userManager.AddToRoleAsync(user, _configuration["Roles:Reader"]);
-            //TODO wait email confimation
-            await _signInManager.SignInAsync(user, false);
             return true;
         }
     }

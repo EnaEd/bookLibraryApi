@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BookLibraryApi.DataAccess
 {
@@ -45,11 +46,16 @@ namespace BookLibraryApi.DataAccess
 
 
             services.AddIdentity<User, IdentityRole>()
-               .AddEntityFrameworkStores<ApplicationContext>();
+               .AddEntityFrameworkStores<ApplicationContext>()
+               .AddDefaultTokenProviders();
 
             services.AddTransient<IRepository<Book>, BookRepository>();
             services.AddTransient<IRepository<Reader>, ReaderRepository>();
             services.AddTransient<ITokenServie, TokenService>();
+            services.AddTransient<IRoleInitializerService, RoleInitializerService>();
+
+            
+            
         }
     }
 }

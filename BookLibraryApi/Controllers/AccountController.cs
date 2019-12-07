@@ -1,10 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using BookLibraryApi.BusinesLayer.Intefaces;
 using BookLibraryApi.BusinesLayer.ViewModels;
+using BookLibraryApi.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace BookLibraryApi.Controllers
 {
@@ -14,10 +18,13 @@ namespace BookLibraryApi.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly IConfiguration _configuration;
-        public AccountController(IAccountService accountService, IConfiguration configuration)
+        private readonly IEmailService _emailService;
+        public AccountController(IAccountService accountService, IConfiguration configuration, IEmailService emailService)
         {
             _accountService = accountService;
             _configuration = configuration;
+            _emailService = emailService;
+            
         }
 
         [HttpPost("Login")]
@@ -42,14 +49,43 @@ namespace BookLibraryApi.Controllers
         }
 
         [HttpPost("Registration")]
-        public async Task<UserViewModel> Registration(UserViewModel user)
+        public async Task<string> Registration(UserViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return null;
             }
+
             List<IdentityError> errors = new List<IdentityError>();
-            return await _accountService.OnReigstration(user, errors) ? user : null;
+            if (!await _accountService.OnReigstration(model, errors))
+            {
+                return JsonConvert.SerializeObject(errors.Select(error => error.Description));
+            }
+
+            //generate mail confirmation
+            string code = await _accountService.GeenerateConfirmationTokenAsync(model);
+            string callbackUrl = Url.Action(
+                "ConfirmEmail",
+                "Account",
+                new { userId = await _accountService.GetUserIdAsync(model), code = code },
+                protocol: HttpContext.Request.Scheme);
+
+            await _emailService.SendEmailAsync(
+                model.Login,
+                "Confirm your account",
+                $"Confirm regisration by link:<a href='{callbackUrl}'>link</a>");
+
+            return (Response.StatusCode = 200).ToString();
+        }
+
+        [HttpGet("ConfirmEmail")]
+        public async Task<string> ConfirmEmail(string userId, string code)
+        {
+            return userId is null ||
+                   code is null ||
+                   !await _accountService.ConfirmEmailAsync(userId, code) ?
+                   (Response.StatusCode = 400).ToString() :
+                   (Response.StatusCode = 200).ToString();
         }
     }
 }
