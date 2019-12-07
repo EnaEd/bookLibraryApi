@@ -21,7 +21,7 @@ namespace BookLibraryApi.BusinesLayer.Services
         private readonly IRoleInitializerService _roleInitializer;
         public AccountService(UserManager<User> userManager, SignInManager<User> signInManager,
             IConfiguration configuration, ITokenServie tokenServie, IEmailService emailService,
-            IRoleInitializerService roleInitializer,RoleManager<IdentityRole> roleManager)
+            IRoleInitializerService roleInitializer, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -30,14 +30,14 @@ namespace BookLibraryApi.BusinesLayer.Services
             _emailService = emailService;
             _roleInitializer = roleInitializer;
             _roleManager = roleManager;
-            
+
         }
 
         public async Task<bool> ConfirmEmailAsync(string userId, string code)
         {
 
             return await _userManager.FindByIdAsync(userId) is User user ?
-                   _userManager.ConfirmEmailAsync(user, code).GetAwaiter().GetResult().Succeeded:
+                   _userManager.ConfirmEmailAsync(user, code).GetAwaiter().GetResult().Succeeded :
                    false;
 
         }
@@ -57,11 +57,21 @@ namespace BookLibraryApi.BusinesLayer.Services
             return await _userManager.FindByEmailAsync(model.Login) is User user ? user.Id : null;
         }
 
-        public async Task<string> OnLogin(UserViewModel user)
+        public async Task<string> OnLogin(UserViewModel model)
         {
+            User user = await _userManager.FindByEmailAsync(model.Login);
+            if (user is null)
+            {
+                return _configuration["ErrorsMessage:UserNotExists:errorCode"];
+            }
+            if (!user.EmailConfirmed)
+            {
+                return _configuration["ErrorsMessage:NoEmailConfirm:errorCode"];
+            }
+
             SignInResult result =
-                await _signInManager.PasswordSignInAsync(user.Login, user.Password, user.RememberMe, false);
-            return result.Succeeded ? await _tokenServie.GenerateToken(user.Login, user.Password) :
+                await _signInManager.PasswordSignInAsync(model.Login, model.Password, model.RememberMe, false);
+            return result.Succeeded ? await _tokenServie.GenerateToken(model.Login, model.Password) :
                 _configuration["ErrorsMessage:Unauthorize:errorCode"];
 
 
